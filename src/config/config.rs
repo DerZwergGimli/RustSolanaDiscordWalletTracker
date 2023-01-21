@@ -4,6 +4,8 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Config {
+    pub(crate) discord_token: String,
+    pub(crate) discord_prefix: String,
     pub(crate) update_timeout: u64,
     pub(crate) rpc_url: String,
     pub(crate) wallet_address: String,

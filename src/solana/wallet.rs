@@ -23,6 +23,7 @@ pub struct Wallet {
     wallet_address: Pubkey,
     solana_balance: u64,
     token_accounts: Vec<TokenAccount>,
+    transaction_queue: Vec<TokenTransaction>,
 }
 
 #[derive(Clone)]
@@ -35,10 +36,10 @@ pub struct TokenAccount {
     last_signature: Option<Signature>,
 }
 
+#[derive(Clone)]
 pub struct TokenTransaction {
     signature: String,
     ui_amount: f64,
-    direction_in: bool,
 }
 
 impl Wallet {
@@ -65,6 +66,7 @@ impl Wallet {
             wallet_address: Pubkey::from_str(&*config.wallet_address).unwrap(),
             solana_balance: 0,
             token_accounts,
+            transaction_queue: vec![],
         }
     }
 
@@ -118,7 +120,10 @@ impl Wallet {
                             max_supported_transaction_version: Some(0),
                         }) {
                             Ok(transaction) => {
-                                info!("Balance Change: {:} {:}", self.parse_balance_change(transaction), token_account.symbol)
+                                self.transaction_queue.push(TokenTransaction {
+                                    signature: signature.signature.clone(),
+                                    ui_amount: self.parse_balance_change(transaction),
+                                });
                             }
                             Err(err) => {
                                 error!("Unable to fetch transaction {:}", err);
@@ -132,6 +137,23 @@ impl Wallet {
                 }
             }
         }
+    }
+
+    pub fn print_transaction_queue(&self) {
+        println!("Transaction Queue:");
+        let mut table_info = Table::new();
+        table_info.add_row(row!["RPC", "Amount"]);
+        self.transaction_queue.clone().into_iter().for_each(|transaction| {
+            table_info.add_row(row![transaction.signature, transaction.ui_amount]);
+        });
+        table_info.printstd();
+    }
+    pub fn get_transaction_queue(&self) -> Vec<TokenTransaction> {
+        self.transaction_queue.clone()
+    }
+    pub fn clear_transaction_queue(&mut self)
+    {
+        self.transaction_queue = vec![];
     }
 
     pub fn print_wallet(&self) {
@@ -194,7 +216,6 @@ impl Wallet {
         }
         post_balance.unwrap() - pre_balance.unwrap()
     }
-
 
     fn format_decimals(&self, number: u64, decimals: u8) -> f64 {
         number as f64 * (10i32 as f32).powi(-(decimals as i32)) as f64
