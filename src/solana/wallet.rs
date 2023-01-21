@@ -110,8 +110,8 @@ impl Wallet {
     pub fn fetch_transactions(&mut self) {
         for (index, token_account) in self.token_accounts.clone().into_iter().enumerate() {
             match self.client.get_signatures_for_address_with_config(&Pubkey::from_str(&*token_account.address).unwrap(), GetConfirmedSignaturesForAddress2Config {
-                before: token_account.last_signature,
-                until: None,
+                before: None,
+                until: token_account.last_signature,
                 limit: Some(10),
                 commitment: Some(CommitmentConfig::finalized()),
             }) {
@@ -239,7 +239,7 @@ impl Wallet {
                 error!("Transaction has no meta parameter!");
             }
         }
-        post_balance.unwrap() - pre_balance.unwrap()
+        post_balance.unwrap_or(0.0) - pre_balance.unwrap_or(0.0)
     }
 
     fn format_decimals(&self, number: u64, decimals: u8) -> f64 {
