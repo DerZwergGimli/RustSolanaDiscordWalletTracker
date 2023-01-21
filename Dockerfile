@@ -1,13 +1,22 @@
-FROM rust:latest AS builder
-WORKDIR build
-RUN apt update && apt install -y libssl-dev pkg-config
+# Leveraging the pre-built Docker images with
+# cargo-chef and the Rust toolchain
+FROM lukemathwalker/cargo-chef:latest-rust-1.59.0 AS chef
+WORKDIR app
+
+FROM chef AS planner
 COPY . .
+RUN cargo chef prepare --recipe-path recipe.json
 
-RUN cargo build --release
+FROM chef AS builder
+COPY --from=planner /app/recipe.json recipe.json
+# Build dependencies - this is the caching Docker layer!
+RUN cargo chef cook --release --recipe-path recipe.json
+# Build application
+COPY . .
+RUN cargo build --release --bin UTC_BOT
 
-
-FROM debian:bullseye
-COPY --from=builder build/SolanaDiscordWalletTracker/target/release/SolanaDiscordWalletTracker ./
-RUN apt update && apt install -y libssl-dev openssl ca-certificates
-RUN openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem -subj "/C=GE/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com"
-ENTRYPOINT [ "./SolanaDiscordWalletTracker" ]
+# We do not need the Rust toolchain to run the binary!
+FROM debian:bullseye-slim AS runtime
+WORKDIR app
+COPY --from=builder /app/target/release/SolanaDiscordWalletTracker /usr/local/bin
+ENTRYPOINT ["/usr/local/bin/SolanaDiscordWalletTracker"]

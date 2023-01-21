@@ -1,5 +1,4 @@
 use std::str::FromStr;
-use std::thread::sleep;
 use log::{debug, error, info, warn};
 use prettytable::{row, Table};
 use solana_client::pubsub_client::{AccountSubscription, PubsubClient};
