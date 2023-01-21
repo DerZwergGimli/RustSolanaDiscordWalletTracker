@@ -1,11 +1,8 @@
 use std::str::FromStr;
-use log::{debug, error, info, warn};
+use log::{error, info, warn};
 use prettytable::{row, Table};
-use solana_client::pubsub_client::{AccountSubscription, PubsubClient};
 use solana_client::rpc_client::{GetConfirmedSignaturesForAddress2Config, RpcClient};
-use solana_client::rpc_config::{RpcAccountInfoConfig, RpcTransactionConfig};
-use solana_client::rpc_response::Response;
-use solana_sdk::clock::UnixTimestamp;
+use solana_client::rpc_config::{RpcTransactionConfig};
 use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::Signature;
@@ -116,7 +113,7 @@ impl Wallet {
             }) {
                 Ok(signatures) => {
                     info!("Fetched {:} signatures", signatures.len());
-                    if signatures.len() > 0 {
+                    if !signatures.is_empty() {
                         self.token_accounts[index].last_signature = Some(Signature::from_str(&*signatures[0].signature).unwrap());
                     }
                     signatures.into_iter().for_each(|signature| {

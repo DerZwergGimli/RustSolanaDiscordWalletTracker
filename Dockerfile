@@ -21,4 +21,6 @@ RUN cargo build --release --bin SolanaDiscordWalletTracker
 FROM debian:bullseye-slim AS runtime
 WORKDIR app
 COPY --from=builder /app/target/release/SolanaDiscordWalletTracker /usr/local/bin
+RUN apt update && apt install -y libssl-dev openssl ca-certificates
+RUN openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem -subj "/C=GE/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com"
 ENTRYPOINT ["/usr/local/bin/SolanaDiscordWalletTracker"]
