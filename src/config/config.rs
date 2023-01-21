@@ -16,7 +16,7 @@ pub struct Config {
 pub struct AccountConfig {
     pub account_address: String,
     pub symbol: String,
-    pub dc_channel_id: String,
+    pub dc_channel_id: u64,
     #[serde(default)]
     pub coingecko_name: String,
 }

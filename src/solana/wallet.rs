@@ -6,6 +6,7 @@ use solana_client::pubsub_client::{AccountSubscription, PubsubClient};
 use solana_client::rpc_client::{GetConfirmedSignaturesForAddress2Config, RpcClient};
 use solana_client::rpc_config::{RpcAccountInfoConfig, RpcTransactionConfig};
 use solana_client::rpc_response::Response;
+use solana_sdk::clock::UnixTimestamp;
 use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::Signature;
@@ -28,18 +29,21 @@ pub struct Wallet {
 
 #[derive(Clone)]
 pub struct TokenAccount {
-    symbol: String,
-    address: String,
-    ui_amount: f64,
-    coingecko_price: f64,
+    pub symbol: String,
+    pub address: String,
+    pub ui_amount: f64,
+    pub coingecko_price: f64,
     coingecko_name: String,
-    last_signature: Option<Signature>,
+    pub last_signature: Option<Signature>,
 }
 
 #[derive(Clone)]
 pub struct TokenTransaction {
-    signature: String,
-    ui_amount: f64,
+    pub signature: String,
+    pub address: String,
+    pub symbol: String,
+    pub ui_amount: f64,
+    pub block_time: i64,
 }
 
 impl Wallet {
@@ -106,13 +110,16 @@ impl Wallet {
     pub fn fetch_transactions(&mut self) {
         for (index, token_account) in self.token_accounts.clone().into_iter().enumerate() {
             match self.client.get_signatures_for_address_with_config(&Pubkey::from_str(&*token_account.address).unwrap(), GetConfirmedSignaturesForAddress2Config {
-                before: None,
-                until: token_account.last_signature,
+                before: token_account.last_signature,
+                until: None,
                 limit: Some(10),
                 commitment: Some(CommitmentConfig::finalized()),
             }) {
                 Ok(signatures) => {
                     info!("Fetched {:} signatures", signatures.len());
+                    if signatures.len() > 0 {
+                        self.token_accounts[index].last_signature = Some(Signature::from_str(&*signatures[0].signature).unwrap());
+                    }
                     signatures.into_iter().for_each(|signature| {
                         match self.client.get_transaction_with_config(&Signature::from_str(&*signature.signature).unwrap(), RpcTransactionConfig {
                             encoding: None,
@@ -122,14 +129,16 @@ impl Wallet {
                             Ok(transaction) => {
                                 self.transaction_queue.push(TokenTransaction {
                                     signature: signature.signature.clone(),
+                                    address: token_account.address.clone(),
+                                    symbol: token_account.symbol.clone(),
                                     ui_amount: self.parse_balance_change(transaction),
+                                    block_time: signature.block_time.unwrap(),
                                 });
                             }
                             Err(err) => {
                                 error!("Unable to fetch transaction {:}", err);
                             }
                         }
-                        self.token_accounts[index].last_signature = Some(Signature::from_str(&*signature.signature).unwrap());
                     });
                 }
                 Err(err) => {
@@ -148,9 +157,24 @@ impl Wallet {
         });
         table_info.printstd();
     }
+
+    pub fn table_token_accounts(&self) -> String {
+        println!("Token-Balances");
+        let mut table_balances = Table::new();
+        table_balances.add_row(row!["Symbol", "Balance", "USD-Value"]);
+        self.token_accounts.clone().into_iter().for_each(|account| {
+            table_balances.add_row(row![account.symbol, format!("{:.2}",account.ui_amount), format!("{:.2}",account.ui_amount * account.coingecko_price)]);
+        });
+        table_balances.to_string()
+    }
     pub fn get_transaction_queue(&self) -> Vec<TokenTransaction> {
         self.transaction_queue.clone()
     }
+    pub fn get_token_accounts(&self) -> Vec<TokenAccount> {
+        self.token_accounts.clone()
+    }
+
+
     pub fn clear_transaction_queue(&mut self)
     {
         self.transaction_queue = vec![];

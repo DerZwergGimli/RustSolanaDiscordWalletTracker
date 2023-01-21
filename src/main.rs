@@ -26,26 +26,8 @@ async fn main() {
     env_logger::init();
     let config = config::config::get_config();
     let mut wallet = solana::wallet::Wallet::new(config.clone());
-    //wallet.fetch_solana_balance();
-    //wallet.fetch_solana_balance();
-    //wallet.fetch_token_accounts_balances();
-
 
     init_bot(config.clone(), wallet).await;
-    // loop {
-    //     wallet.fetch_solana_balance();
-    //     wallet.fetch_token_accounts_balances();
-    //     wallet.fetch_token_account_prices().await;
-    //
-    //     wallet.print_wallet();
-    //
-    //     wallet.fetch_transactions();
-    //     wallet.print_transaction_queue();
-    //     wallet.clear_transaction_queue();
-    //
-    //     thread::sleep(Duration::from_millis(config.clone().update_timeout));
-    // }
-
 
     println!("--- EXIT ---");
 }

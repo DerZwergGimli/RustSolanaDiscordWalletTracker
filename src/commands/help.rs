@@ -18,13 +18,13 @@ async fn help(ctx: &Context, msg: &Message) -> CommandResult {
                 .description("This are all commands available for the wallet-tracker-bot.")
                 .color(Color::ORANGE)
                 .field(prefix.clone() + "help", "Shows this message", false)
+                .field(prefix.clone() + "config", "Prints Configuration", false)
+                .field(prefix.clone() + "store", "Prints Stored-last signatures", false)
                 .field(prefix.clone() + "address", "Prints the wallet-address", false)
-                .field(prefix.clone() + "domain", "Prints the wallet-domain", false)
                 .field(prefix.clone() + "solscan", "Prints a link to solcan.io", false)
                 .field(prefix.clone() + "solanaBeach", "Prints a link to solanabeach.io", false)
                 .field(prefix.clone() + "step", "Prints a link to step.finance", false)
                 .field(prefix.clone() + "wallet", "Prints a wallet info", false)
-
                 .timestamp(Timestamp::now())
         })
     }).await?;
