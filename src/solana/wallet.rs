@@ -163,6 +163,7 @@ impl Wallet {
         table_info.add_row(row![self.client.url(), self.wallet_address, self.format_decimals(self.solana_balance, SOLANA_DECIMALS)]);
         table_info.printstd();
 
+
         println!("Token-Balances");
         let mut table_balances = Table::new();
         table_balances.add_row(row!["Address", "Symbol", "Balance", "TokenPrice", "USD-Value"]);

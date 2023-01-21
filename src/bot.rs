@@ -1,3 +1,4 @@
+use std::borrow::BorrowMut;
 use std::env;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
@@ -17,12 +18,22 @@ use serenity::prelude::*;
 use serenity::framework::standard::macros::group;
 
 use crate::commands::ping::*;
+use crate::commands::help::*;
+use crate::commands::wallet::*;
+
 use crate::config::config::Config;
 use crate::solana::wallet::Wallet;
 
-struct Bot {
-    wallet: Wallet,
-    pub(crate) is_loop_running: AtomicBool,
+struct WalletStore;
+
+impl TypeMapKey for WalletStore {
+    type Value = Arc<Mutex<Wallet>>;
+}
+
+pub struct ConfigStore;
+
+impl TypeMapKey for ConfigStore {
+    type Value = Arc<Mutex<Config>>;
 }
 
 pub struct Handler {
@@ -30,23 +41,27 @@ pub struct Handler {
 }
 
 #[group]
-#[commands(ping)]
+#[commands(ping, help, wallet)]
 struct General;
 
 #[async_trait]
-impl EventHandler for Bot {
+impl EventHandler for Handler {
     async fn cache_ready(&self, ctx: Context, _guilds: Vec<GuildId>) {
         println!("Cache built successfully!");
 
         let ctx = Arc::new(ctx);
 
+
         if !self.is_loop_running.load(Ordering::Relaxed) {
             let ctx1 = Arc::clone(&ctx);
+
             tokio::spawn(async move {
                 loop {
                     // We clone Context again here, because Arc is owned, so it moves to the
                     // new function.
-                    log_system_load(Arc::clone(&ctx1)).await;
+                    check_wallet(Arc::clone(&ctx1)).await;
+                    let data_read = ctx1.data.read().await;
+                    data_read.get::<WalletStore>().unwrap().lock().await.print_wallet();
                     tokio::time::sleep(Duration::from_secs(1)).await;
                 }
             });
@@ -55,7 +70,18 @@ impl EventHandler for Bot {
             tokio::spawn(async move {
                 loop {
                     set_status_to_current_time(Arc::clone(&ctx2)).await;
-                    tokio::time::sleep(Duration::from_secs(60)).await;
+                    let mut data_read = ctx2.data.read().await;
+                    let mut wallet = data_read.get::<WalletStore>().unwrap();
+                    wallet.lock().await.fetch_solana_balance();
+                    wallet.lock().await.fetch_token_accounts_balances();
+                    //data_read.insert::<WalletStore>(Arc::new(wallet));
+                    //data_read.entry();
+                    //wallet.fetch_solana_balance();
+                    //wallet.fetch_solana_balance();
+                    //wallet.fetch_token_accounts_balances();
+
+
+                    tokio::time::sleep(Duration::from_secs(1)).await;
                 }
             });
 
@@ -68,8 +94,7 @@ impl EventHandler for Bot {
     }
 }
 
-async fn log_system_load(ctx: Arc<Context>) {
-
+async fn check_wallet(ctx: Arc<Context>) {
     // We can use ChannelId directly to send a message to a specific channel; in this case, the
     // message would be sent to the #testing channel on the discord server.
     let message = ChannelId(381926291785383946)
@@ -103,7 +128,7 @@ async fn set_status_to_current_time(ctx: Arc<Context>) {
 
 
 pub async fn init_bot(config: Config, wallet: Wallet) {
-    let http = Http::new(&*config.discord_token);
+    let http = Http::new(&*config.clone().discord_token);
     let (owners, _bot_id) = match http.get_current_application_info().await {
         Ok(info) => {
             let mut owners = HashSet::new();
@@ -115,21 +140,26 @@ pub async fn init_bot(config: Config, wallet: Wallet) {
     };
 
     let framework =
-        StandardFramework::new().configure(|c| c.owners(owners).prefix(config.discord_prefix)).group(&GENERAL_GROUP);
+        StandardFramework::new().configure(|c| c.owners(owners).prefix(config.clone().discord_prefix)).group(&GENERAL_GROUP);
 
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::GUILDS
         | GatewayIntents::MESSAGE_CONTENT;
-    let mut client = Client::builder(config.discord_token, intents)
+    let mut client = Client::builder(config.clone().discord_token, intents)
         .framework(framework)
-        .event_handler(Bot {
-            wallet,
+        .event_handler(Handler {
             is_loop_running: AtomicBool::new(false),
         })
         .await
         .expect("Error creating client");
+    {
+        let mut data = client.data.write().await;
+        data.insert::<WalletStore>(Arc::new(Mutex::new(wallet)));
+        data.insert::<ConfigStore>(Arc::new(Mutex::new(config)));
+    }
+
 
     if let Err(why) = client.start().await {
         eprintln!("Client error: {:?}", why);

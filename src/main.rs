@@ -26,9 +26,9 @@ async fn main() {
     env_logger::init();
     let config = config::config::get_config();
     let mut wallet = solana::wallet::Wallet::new(config.clone());
-    wallet.fetch_solana_balance();
-    wallet.fetch_solana_balance();
-    wallet.fetch_token_accounts_balances();
+    //wallet.fetch_solana_balance();
+    //wallet.fetch_solana_balance();
+    //wallet.fetch_token_accounts_balances();
 
 
     init_bot(config.clone(), wallet).await;
