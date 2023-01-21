@@ -1,5 +1,3 @@
-use std::borrow::BorrowMut;
-use prettytable::{row, Table};
 use serenity::framework::standard::macros::command;
 use serenity::framework::standard::CommandResult;
 use serenity::model::prelude::*;

@@ -6,7 +6,7 @@ use solana_client::rpc_config::{RpcTransactionConfig};
 use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::Signature;
-use solana_transaction_status::{EncodedConfirmedTransactionWithStatusMeta, EncodedTransaction, UiTransactionStatusMeta, UiTransactionTokenBalance};
+use solana_transaction_status::EncodedConfirmedTransactionWithStatusMeta;
 use solana_transaction_status::option_serializer::OptionSerializer;
 use crate::coingecko::coingecko_api::get_coingecko_price;
 use crate::config::config::Config;
@@ -164,17 +164,16 @@ impl Wallet {
         });
         table_balances.to_string()
     }
+
     pub fn get_sol(&self) -> f64 {
         self.format_decimals(self.solana_balance, SOLANA_DECIMALS)
     }
-
     pub fn get_transaction_queue(&self) -> Vec<TokenTransaction> {
         self.transaction_queue.clone()
     }
     pub fn get_token_accounts(&self) -> Vec<TokenAccount> {
         self.token_accounts.clone()
     }
-
 
     pub fn clear_transaction_queue(&mut self)
     {

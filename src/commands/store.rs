@@ -1,11 +1,8 @@
-use std::borrow::BorrowMut;
 use prettytable::{row, Table};
 use serenity::framework::standard::macros::command;
 use serenity::framework::standard::CommandResult;
 use serenity::model::prelude::*;
 use serenity::prelude::*;
-use serenity::utils::Color;
-use solana_sdk::signature::Signature;
 use crate::bot::{WalletStore};
 
 #[command]

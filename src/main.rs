@@ -4,7 +4,6 @@ mod coingecko;
 mod bot;
 mod commands;
 
-use std::{task, thread};
 use dotenv::dotenv;
 use crate::bot::init_bot;
 

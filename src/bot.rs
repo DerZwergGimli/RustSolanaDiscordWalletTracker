@@ -13,7 +13,6 @@ use serenity::model::gateway::{Activity, Ready};
 use serenity::model::id::{ChannelId, GuildId};
 use serenity::framework::standard::macros::group;
 use serenity::utils::Color;
-use solana_sdk::signature::Signature;
 
 use crate::commands::ping::*;
 use crate::commands::help::*;
@@ -89,8 +88,8 @@ impl EventHandler for Handler {
 }
 
 async fn update_wallet(ctx: Arc<Context>) {
-    let mut data_read = ctx.data.read().await;
-    let mut wallet = data_read.get::<WalletStore>().unwrap();
+    let data_read = ctx.data.read().await;
+    let wallet = data_read.get::<WalletStore>().unwrap();
     wallet.lock().await.fetch_solana_balance();
     wallet.lock().await.fetch_token_accounts_balances();
     wallet.lock().await.fetch_token_account_prices().await;
@@ -104,11 +103,11 @@ async fn check_tx_queue(ctx: Arc<Context>) {
 
     let config = arc_config.lock().await.clone();
 
-    let mut arc_wallet = data_read.get::<WalletStore>().expect("Expected WalletStore in TypeMap");
+    let arc_wallet = data_read.get::<WalletStore>().expect("Expected WalletStore in TypeMap");
 
     let queue = arc_wallet.lock().await.get_transaction_queue();
     warn!("Len {:}", queue.len());
-    for (index, transaction) in queue.into_iter().enumerate() {
+    for transaction in queue.into_iter() {
         let direction_emote = if transaction.ui_amount >= 0.0 { ":inbox_tray:" } else { ":outbox_tray:" };
         let info_message = format!("{:} {:.2} {:}", direction_emote, transaction.ui_amount, transaction.symbol);
         let channel_id = match config.account_configs.clone().into_iter().find(|account| {
@@ -118,7 +117,7 @@ async fn check_tx_queue(ctx: Arc<Context>) {
             Some(account) => { account.dc_channel_id }
         };
 
-        let message = ChannelId(channel_id).send_message(&ctx.http, |m| {
+        let _ = ChannelId(channel_id).send_message(&ctx.http, |m| {
             m.embed(|e| {
                 e.title(":information_source: SPL-Transaction :information_source:")
                     .color(Color::ORANGE)
@@ -138,7 +137,7 @@ async fn check_tx_queue(ctx: Arc<Context>) {
 
 async fn update_nickname(ctx: Arc<Context>, _guilds: Vec<GuildId>) {
     let data_read = ctx.data.read().await;
-    let mut arc_wallet = data_read.get::<WalletStore>().expect("Expected WalletStore in TypeMap");
+    let arc_wallet = data_read.get::<WalletStore>().expect("Expected WalletStore in TypeMap");
     let tokens = arc_wallet.lock().await.get_token_accounts();
 
     let mut sum = 0.0;
@@ -163,7 +162,7 @@ async fn update_nickname(ctx: Arc<Context>, _guilds: Vec<GuildId>) {
 fn update_config_file_last_signatures(token_accounts: Vec<TokenAccount>) {
     let mut config_old = config::config::get_config();
 
-    for (index, account_config) in config_old.account_configs.clone().into_iter().enumerate() {
+    for (index, _account_config) in config_old.account_configs.clone().into_iter().enumerate() {
         match token_accounts[index].last_signature {
             None => {}
             Some(sig) => {

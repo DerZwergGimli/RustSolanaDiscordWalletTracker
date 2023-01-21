@@ -1,9 +1,7 @@
-use std::borrow::BorrowMut;
 use serenity::framework::standard::macros::command;
 use serenity::framework::standard::CommandResult;
 use serenity::model::prelude::*;
 use serenity::prelude::*;
-use serenity::utils::Color;
 use crate::bot::{WalletStore};
 
 #[command]
