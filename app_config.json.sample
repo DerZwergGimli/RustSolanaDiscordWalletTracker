@@ -1,0 +1,31 @@
+{
+  "discord_token": "DISCORDTOKEN",
+  "discord_prefix": "~",
+  "update_timeout": 10000,
+  "rpc_url": "RPCURL",
+  "wallet_address": "WALLETADDRESS",
+  "account_configs": [
+    {
+      "account_address": "TOKENACCOUNTADDRESS",
+      "symbol": "TOKENSYMBOLTOSHOW",
+      "dc_channel_id": CHANNELTOPOSTMESSAGE,
+      "coingecko_name": "COINGECKONAME",
+      "last_signature": "LASTSIGNATURE"
+    },
+    {
+      "account_address": "TOKENACCOUNTADDRESS",
+      "symbol": "TOKENSYMBOLTOSHOW",
+      "dc_channel_id": CHANNELTOPOSTMESSAGE,
+      "coingecko_name": "COINGECKONAME",
+      "last_signature": "LASTSIGNATURE"
+    },
+    {
+      "account_address": "TOKENACCOUNTADDRESS",
+      "symbol": "TOKENSYMBOLTOSHOW",
+      "dc_channel_id": CHANNELTOPOSTMESSAGE,
+      "coingecko_name": "COINGECKONAME",
+      "last_signature": "LASTSIGNATURE"
+    }
+  ]
+}
+

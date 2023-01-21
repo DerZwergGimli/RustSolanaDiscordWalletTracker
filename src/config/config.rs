@@ -1,3 +1,4 @@
+use std::env;
 use std::fs::File;
 use std::io::Read;
 use serde::Deserialize;
@@ -24,7 +25,7 @@ pub struct AccountConfig {
 
 
 pub fn get_config() -> Config {
-    let mut file = File::open("app_config.json").unwrap();
+    let mut file = File::open(env::var("CONFIG_PATH").unwrap()).unwrap();
     let mut data = String::new();
     file.read_to_string(&mut data).unwrap();
 
