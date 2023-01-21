@@ -5,9 +5,9 @@ channel.
 
 ## Features
 
-- Configure Token accounts to watch
-- Configure UpdateTime and RPC-Endpoint
-- Configure Prefix
+- Configure: Token accounts to watch
+- Configure: UpdateTime and RPC-Endpoint
+- Configure: bot prefix
 - Request wallet token account balances
 - Post transaction info form token-accounts into a channel
 - Fetch prices form coingecko
@@ -70,15 +70,23 @@ Below you can find a sample configuration...
 
 ## Deployment
 
-To Deploy this application using docker you can reference to the offical-docker-hub-image:
+Make sure you have installed:
 
-- Docker image
+- docker
+- docker-compose
 
-1. Copy the file `cp docker-compose.yaml.sample docker-compose.yaml`
-2. Modify the `docker-compose.yaml`
-3. Start the container via `docker-compose up -d`
+To deploy this application using docker you can reference to the offical-docker-hub-image:
+([docker-compose](docker-compose.yaml.sample))
+
+1. Clone this repo
+2. Make sure to edit the app_config,json (see above)
+3. Copy the file `cp docker-compose.yaml.sample docker-compose.yaml`
+4. Modify the `docker-compose.yaml` if needed
+5. Start the container via `docker-compose up -d`
 
 ### Environment-Variables
+
+are set in `./docker-compose.yaml`
 
 ```dotenv
 RUST_LOG=warn
@@ -86,9 +94,3 @@ CONFIG_PATH=./app_config.json
 WRITE_CONFIG=false
 ```
 
-## Development
-
-To Update the cargo-chef used for creating the docker container run:
-
-- `cargo chef prepare --recipe-path recipe.json`
-- `docker image build .`
