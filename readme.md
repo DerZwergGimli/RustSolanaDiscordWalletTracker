@@ -12,6 +12,16 @@ channel.
 - Post transaction info form token-accounts into a channel
 - Fetch prices form coingecko
 
+## View
+
+Bot-Appearance (icon can be changed via Discord-developer portal):
+
+![sample-view](images/bot_sample_icon.png)
+
+Bot-Sample Message:
+
+![sample-message](images/bot_sample_message.png)
+
 ## Commands
 
 | command  | description                   |
@@ -22,6 +32,16 @@ channel.
 | ~address | Prints the wallet-address     |
 | ~wallet  | Prints a wallet info          | 
 
+## Discord-Config
+
+Make sure:
+
+1. The bot has permission to post in a channel (provided via ID)
+2. Make sure to set the rules when creating an invite for the bot
+3. Make also sure to enable this option (image below)
+
+   ![discord-setting](images/bot_discord_config.png)
+
 ## Configuration
 
 To configure your deployment:
@@ -29,7 +49,7 @@ To configure your deployment:
 1. move the file `cp app_config.json.sample  app_config.json`.
 2. modify the file accordingly
 
-![assign_accounts-to-monitor](Config_bot_image.png)
+![assign_accounts-to-monitor](images/bot_config_explain.png)
 
 
 ---
