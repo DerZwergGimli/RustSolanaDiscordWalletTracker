@@ -19,8 +19,8 @@ async fn help(ctx: &Context, msg: &Message) -> CommandResult {
                 .field(prefix.clone() + "help", "Shows this message", false)
                 .field(prefix.clone() + "config", "Prints configuration", false)
                 .field(prefix.clone() + "store", "Prints stored-last signatures", false)
-                .field(prefix.clone() + "address", "Prints the wallet-address", false)
-                .field(prefix.clone() + "wallet", "Prints a wallet info", false)
+                .field(prefix.clone() + "address", "Prints wallet-address helper", false)
+                .field(prefix.clone() + "wallet", "Prints wallet info", false)
                 .timestamp(Timestamp::now())
         })
     }).await?;
