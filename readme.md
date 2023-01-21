@@ -72,7 +72,7 @@ To Deploy this application using docker you can reference to the offical-docker-
 
 1. Copy the file `cp docker-compose.yaml.sample docker-compose.yaml`
 2. Modify the `docker-compose.yaml`
-3. Start the container via `docker compose up -d`
+3. Start the container via `docker-compose up -d`
 
 ### Environment-Variables
 
