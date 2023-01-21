@@ -25,6 +25,7 @@ use crate::commands::help::*;
 use crate::commands::wallet::*;
 use crate::commands::config::*;
 use crate::commands::store::*;
+use crate::commands::address::*;
 
 use crate::config::config::{AccountConfig, Config};
 use crate::solana::wallet::Wallet;
@@ -46,7 +47,7 @@ pub struct Handler {
 }
 
 #[group]
-#[commands(ping, help, wallet, config, store)]
+#[commands(ping, help, wallet, config, store, address)]
 struct General;
 
 #[async_trait]
