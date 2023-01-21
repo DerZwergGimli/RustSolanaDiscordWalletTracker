@@ -99,7 +99,9 @@ impl Wallet {
 
     pub async fn fetch_token_account_prices(&mut self) {
         for (index, token_account) in self.token_accounts.clone().into_iter().enumerate() {
-            self.token_accounts[index].coingecko_price = get_coingecko_price(token_account.coingecko_name).await;
+            if !token_account.coingecko_name.is_empty() {
+                self.token_accounts[index].coingecko_price = get_coingecko_price(token_account.coingecko_name).await;
+            }
         }
     }
 
