@@ -13,7 +13,7 @@ async fn address(ctx: &Context, msg: &Message) -> CommandResult {
     let arc_config = data_read.get::<ConfigStore>().expect("Expected ConfigStore in TypeMap");
     let config = arc_config.lock().await.clone();
 
-    let message = msg.channel_id.send_message(&ctx.http, |m| {
+    let _ = msg.channel_id.send_message(&ctx.http, |m| {
         m.embed(|e| {
             e.title("Wallet-Address")
                 .color(Color::ORANGE)

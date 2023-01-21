@@ -11,6 +11,7 @@ async fn wallet(ctx: &Context, msg: &Message) -> CommandResult {
     let data_read = ctx.data.read().await;
     let arc_wallet = data_read.get::<WalletStore>().expect("Expected ConfigStore in TypeMap");
     let table_string = arc_wallet.lock().await.table_token_accounts();
+    let sol_balance = arc_wallet.lock().await.get_sol();
     let tokens = arc_wallet.lock().await.get_token_accounts();
 
     let mut sum = 0.0;
@@ -19,7 +20,7 @@ async fn wallet(ctx: &Context, msg: &Message) -> CommandResult {
     });
 
     let message =
-        format!("Wallet-Tokens: \n```\n{:}```\n Total: \n```\n{:.2} USD```", table_string, sum);
+        format!("Wallet-Tokens: \n```\nSOL: {:}```\n````\n{:}```\n Total: \n```\n{:.2} USD```", sol_balance, table_string, sum);
 
     msg.channel_id.say(&ctx.http, message).await?;
 

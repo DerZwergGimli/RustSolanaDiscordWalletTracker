@@ -163,6 +163,10 @@ impl Wallet {
         });
         table_balances.to_string()
     }
+    pub fn get_sol(&self) -> f64 {
+        self.format_decimals(self.solana_balance, SOLANA_DECIMALS)
+    }
+    
     pub fn get_transaction_queue(&self) -> Vec<TokenTransaction> {
         self.transaction_queue.clone()
     }

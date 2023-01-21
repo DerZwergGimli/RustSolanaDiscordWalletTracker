@@ -1,4 +1,3 @@
-use std::num::ParseFloatError;
 use log::{error, warn};
 use serde_json::Value;
 use solana_client::client_error::reqwest;

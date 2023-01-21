@@ -1,22 +1,16 @@
-use std::borrow::BorrowMut;
-use std::env;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 use std::collections::HashSet;
 use std::sync::Arc;
-use chrono::{DateTime, format, NaiveDateTime};
-use serenity::client::bridge::gateway::ShardManager;
+use chrono::{DateTime, NaiveDateTime};
 use serenity::framework::StandardFramework;
 use serenity::http::Http;
-use serenity::model::event::ResumedEvent;
 use serenity::prelude::*;
 use chrono::offset::Utc;
 use log::{error, info, warn};
 use serenity::async_trait;
-use serenity::model::channel::Message;
 use serenity::model::gateway::{Activity, Ready};
 use serenity::model::id::{ChannelId, GuildId};
-use serenity::prelude::*;
 use serenity::framework::standard::macros::group;
 use serenity::utils::Color;
 
@@ -27,7 +21,7 @@ use crate::commands::config::*;
 use crate::commands::store::*;
 use crate::commands::address::*;
 
-use crate::config::config::{AccountConfig, Config};
+use crate::config::config::{Config};
 use crate::solana::wallet::Wallet;
 
 pub struct WalletStore;
