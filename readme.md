@@ -9,7 +9,8 @@ channel.
 - Configure UpdateTime and RPC-Endpoint
 - Configure Prefix
 - Request wallet token account balances
-- Post transactions info form token-accounts into a channel
+- Post transaction info form token-accounts into a channel
+- Fetch prices form coingecko
 
 ## Commands
 
@@ -27,6 +28,9 @@ To configure your deployment:
 
 1. move the file `cp app_config.json.sample  app_config.json`.
 2. modify the file accordingly
+
+![assign_accounts-to-monitor](Config_bot_image.png)
+
 
 ---
 Below you can find a sample configuration...
