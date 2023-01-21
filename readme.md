@@ -79,6 +79,7 @@ To Deploy this application using docker you can reference to the offical-docker-
 ```dotenv
 RUST_LOG=warn
 CONFIG_PATH=./app_config.json
+WRITE_CONFIG=false
 ```
 
 ## Development

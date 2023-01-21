@@ -13,6 +13,7 @@ use serenity::model::gateway::{Activity, Ready};
 use serenity::model::id::{ChannelId, GuildId};
 use serenity::framework::standard::macros::group;
 use serenity::utils::Color;
+use solana_sdk::signature::Signature;
 
 use crate::commands::ping::*;
 use crate::commands::help::*;
@@ -20,9 +21,10 @@ use crate::commands::wallet::*;
 use crate::commands::config::*;
 use crate::commands::store::*;
 use crate::commands::address::*;
+use crate::config;
 
 use crate::config::config::{Config};
-use crate::solana::wallet::Wallet;
+use crate::solana::wallet::{TokenAccount, Wallet};
 
 pub struct WalletStore;
 
@@ -127,8 +129,9 @@ async fn check_tx_queue(ctx: Arc<Context>) {
             })
         }).await;
     }
-    arc_wallet.lock().await.clear_transaction_queue();
 
+    update_config_file_last_signatures(arc_wallet.lock().await.get_token_accounts());
+    arc_wallet.lock().await.clear_transaction_queue();
 
     info!("checked-queue!");
 }
@@ -155,6 +158,20 @@ async fn update_nickname(ctx: Arc<Context>, _guilds: Vec<GuildId>) {
     let formatted_time = current_time.to_rfc2822();
 
     ctx.set_activity(Activity::playing(&formatted_time)).await;
+}
+
+fn update_config_file_last_signatures(token_accounts: Vec<TokenAccount>) {
+    let mut config_old = config::config::get_config();
+
+    for (index, account_config) in config_old.account_configs.clone().into_iter().enumerate() {
+        match token_accounts[index].last_signature {
+            None => {}
+            Some(sig) => {
+                config_old.account_configs[index].last_signature = sig.to_string();
+            }
+        }
+    }
+    config::config::update_config(config_old);
 }
 
 

@@ -2,3 +2,4 @@
 /.env
 /app_config.json
 /docker-compose.yaml
+/Cargo.lock
