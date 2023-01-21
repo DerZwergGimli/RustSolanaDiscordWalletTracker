@@ -59,7 +59,7 @@ impl Wallet {
                 ui_amount: 0.0,
                 coingecko_price: 0.0,
                 coingecko_name: account.coingecko_name,
-                last_signature: None,
+                last_signature: Some(Signature::from_str(&*account.last_signature).unwrap()),
 
             })
         });

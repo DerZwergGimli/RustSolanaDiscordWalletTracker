@@ -19,6 +19,7 @@ pub struct AccountConfig {
     pub dc_channel_id: u64,
     #[serde(default)]
     pub coingecko_name: String,
+    pub last_signature: String,
 }
 
 
