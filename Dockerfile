@@ -1,28 +1,13 @@
-FROM lukemathwalker/cargo-chef:latest-rust-1.59.0 AS chef
-WORKDIR app
-
-FROM chef AS planner
+FROM rust:latest AS builder
+WORKDIR build
+RUN apt update && apt install -y libssl-dev pkg-config
 COPY . .
-RUN cargo chef prepare --recipe-path recipe.json
 
-FROM chef AS builder
-COPY --from=planner /app/recipe.json recipe.json
-# Build dependencies - this is the caching Docker layer!
-RUN cargo chef cook --release --recipe-path recipe.json
-# Build application
-COPY . .
-RUN cargo build --release --bin SolanaDiscordWalletTracker
+RUN cargo build --release
 
-# We do need the following deps!
-FROM debian:bullseye-slim AS runtime
-RUN apt-get update
-RUN apt-get install openssl -y
-RUN apt-get install curl -y
 
-WORKDIR app
-RUN mkdir /usr/local/bin/files
-COPY files/* /usr/local/bin/files/
-COPY --from=builder /app/target/release/SolanaDiscordWalletTracker /usr/local/bin
-RUN chmod +x /usr/local/bin/SolanaDiscordWalletTracker
-WORKDIR /usr/local/bin
-ENTRYPOINT ["/usr/local/bin/SolanaDiscordWalletTracker"]
+FROM debian:bullseye
+COPY --from=builder build/SolanaDiscordWalletTracker/target/release/SolanaDiscordWalletTracker ./
+RUN apt update && apt install -y libssl-dev openssl ca-certificates
+RUN openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem -subj "/C=GE/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com"
+ENTRYPOINT [ "./worker" ]
