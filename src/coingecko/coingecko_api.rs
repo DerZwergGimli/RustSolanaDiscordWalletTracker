@@ -14,15 +14,19 @@ pub async fn get_coingecko_price(cg_token_name: String) -> f64 {
         }
         Err(err) => { error!("connecting using GET: {:}", err) }
     };
-
-    let json: Value = serde_json::from_str(&*text).unwrap();
-
     let mut value = 0.0;
-    match json[cg_token_name]["usd"].to_string().parse::<f64>() {
-        Ok(data) => { value = data }
-        Err(err) => {
-            warn!("Unable to parse CoingeckoPrice: {:}", err)
+
+    if !text.is_empty() {
+        let json: Value = serde_json::from_str(&*text).unwrap();
+
+        match json[cg_token_name]["usd"].to_string().parse::<f64>() {
+            Ok(data) => { value = data }
+            Err(err) => {
+                warn!("Unable to parse CoingeckoPrice: {:}", err);
+                warn!("{}", json);
+            }
         }
     }
+
     value
 }

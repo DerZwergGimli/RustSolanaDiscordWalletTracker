@@ -78,7 +78,7 @@ impl Wallet {
             Err(err) => {
                 error!("{:?}", err);
                 error!("Unable to fetch balance!");
-                self.solana_balance = 0;
+                //self.solana_balance = 0;
             }
         }
     }
@@ -155,7 +155,6 @@ impl Wallet {
     }
 
     pub fn table_token_accounts(&self) -> String {
-        println!("Token-Balances");
         let mut table_balances = Table::new();
         table_balances.add_row(row!["Symbol", "Balance", "USD-Value"]);
         self.token_accounts.clone().into_iter().for_each(|account| {
@@ -166,7 +165,7 @@ impl Wallet {
     pub fn get_sol(&self) -> f64 {
         self.format_decimals(self.solana_balance, SOLANA_DECIMALS)
     }
-    
+
     pub fn get_transaction_queue(&self) -> Vec<TokenTransaction> {
         self.transaction_queue.clone()
     }

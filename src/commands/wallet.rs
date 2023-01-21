@@ -20,7 +20,7 @@ async fn wallet(ctx: &Context, msg: &Message) -> CommandResult {
     });
 
     let message =
-        format!("Wallet-Tokens: \n```\nSOL: {:}```\n````\n{:}```\n Total: \n```\n{:.2} USD```", sol_balance, table_string, sum);
+        format!("Wallet-Overview: \n```\nSOL: {:}```\nToken-Accounts: \n```\n{:} \nTotal: {:.2} $```\n", sol_balance, table_string, sum);
 
     msg.channel_id.say(&ctx.http, message).await?;
 
