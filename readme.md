@@ -1,3 +1,11 @@
+[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![test](https://github.com/DerZwergGimli/RustSolanaDiscordWalletTracker/actions/workflows/build-test.yml/badge.svg)](https://github.com/DerZwergGimli/RustSolanaDiscordWalletTracker/actions/workflows/build-test.yml)
+[![deploy](https://github.com/DerZwergGimli/RustSolanaDiscordWalletTracker/actions/workflows/deploy-docker.yml/badge.svg)](https://github.com/DerZwergGimli/RustSolanaDiscordWalletTracker/actions/workflows/deploy-docker.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![badge_discord](https://badgen.net/badge/icon/discord?icon=discord&label)
+![badge_docker_pulls](https://badgen.net/docker/pulls/derzwerggimli/rust-solana-discord-tracker)
+![badge_docker_size](https://badgen.net/docker/size/derzwerggimli/rust-solana-discord-tracker)
+
 # Rust Solana Discord Tracker
 
 A simple discord-bot for monitoring a Solana-Wallet with some specified token-accounts and post all transactions into a
