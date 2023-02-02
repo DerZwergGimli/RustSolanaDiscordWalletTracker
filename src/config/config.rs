@@ -19,6 +19,7 @@ pub struct Config {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct AccountConfig {
     pub account_address: String,
+    pub token_mint: String,
     pub symbol: String,
     pub dc_channel_id: u64,
     #[serde(default)]

@@ -27,6 +27,7 @@ pub struct Wallet {
 pub struct TokenAccount {
     pub symbol: String,
     pub address: String,
+    pub mint: String,
     pub ui_amount: f64,
     pub coingecko_price: f64,
     coingecko_name: String,
@@ -52,6 +53,7 @@ impl Wallet {
             token_accounts.push(TokenAccount {
                 symbol: account.symbol,
                 address: account.account_address,
+                mint: account.token_mint,
                 ui_amount: 0.0,
                 coingecko_price: 0.0,
                 coingecko_name: account.coingecko_name,
@@ -129,7 +131,7 @@ impl Wallet {
                                     signature: signature.signature.clone(),
                                     address: token_account.address.clone(),
                                     symbol: token_account.symbol.clone(),
-                                    ui_amount: self.parse_balance_change(transaction),
+                                    ui_amount: self.parse_balance_change(transaction, token_account.clone().mint),
                                     block_time: signature.block_time.unwrap(),
                                 });
                             }
@@ -168,9 +170,11 @@ impl Wallet {
     pub fn get_sol(&self) -> f64 {
         self.format_decimals(self.solana_balance, SOLANA_DECIMALS)
     }
+
     pub fn get_transaction_queue(&self) -> Vec<TokenTransaction> {
         self.transaction_queue.clone()
     }
+
     pub fn get_token_accounts(&self) -> Vec<TokenAccount> {
         self.token_accounts.clone()
     }
@@ -197,7 +201,7 @@ impl Wallet {
         table_balances.printstd();
     }
 
-    pub fn parse_balance_change(&self, transaction: EncodedConfirmedTransactionWithStatusMeta) -> f64 {
+    pub fn parse_balance_change(&self, transaction: EncodedConfirmedTransactionWithStatusMeta, account_mint_to_find: String) -> f64 {
         let mut pre_balance = Some(0.0);
         let mut post_balance = Some(0.0);
         match transaction.transaction.meta {
@@ -207,7 +211,7 @@ impl Wallet {
                         balances.into_iter().for_each(|balance| {
                             match balance.owner {
                                 OptionSerializer::Some(data) => {
-                                    if data.contains(&self.wallet_address.to_string()) {
+                                    if data.contains(&self.wallet_address.to_string()) && balance.mint == account_mint_to_find {
                                         pre_balance = balance.ui_token_amount.ui_amount;
                                     };
                                 }
@@ -223,7 +227,7 @@ impl Wallet {
                         balances.into_iter().for_each(|balance| {
                             match balance.owner {
                                 OptionSerializer::Some(data) => {
-                                    if data.contains(&self.wallet_address.to_string()) {
+                                    if data.contains(&self.wallet_address.to_string()) && balance.mint == account_mint_to_find {
                                         post_balance = balance.ui_token_amount.ui_amount;
                                     };
                                 }
