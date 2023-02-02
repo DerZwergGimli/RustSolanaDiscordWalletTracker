@@ -7,6 +7,7 @@
   "account_configs": [
     {
       "account_address": "TOKENACCOUNTADDRESS",
+      "token_mint": "SPLTOKENMINTADDRESS",
       "symbol": "TOKENSYMBOLTOSHOW",
       "dc_channel_id": CHANNELTOPOSTMESSAGE,
       "coingecko_name": "COINGECKONAME",
@@ -14,6 +15,7 @@
     },
     {
       "account_address": "TOKENACCOUNTADDRESS",
+      "token_mint": "SPLTOKENMINTADDRESS",
       "symbol": "TOKENSYMBOLTOSHOW",
       "dc_channel_id": CHANNELTOPOSTMESSAGE,
       "coingecko_name": "COINGECKONAME",
@@ -21,6 +23,7 @@
     },
     {
       "account_address": "TOKENACCOUNTADDRESS",
+      "token_mint": "SPLTOKENMINTADDRESS",
       "symbol": "TOKENSYMBOLTOSHOW",
       "dc_channel_id": CHANNELTOPOSTMESSAGE,
       "coingecko_name": "COINGECKONAME",

@@ -73,6 +73,7 @@ Below you can find a sample configuration...
   "account_configs": [
     {
       "account_address": "TOKENACCOUNTADDRESS",
+      "token_mint": "SPLTOKENMINTADDRESS",
       "symbol": "TOKENSYMBOLTOSHOW",
       "dc_channel_id": CHANNELTOPOSTMESSAGE,
       "coingecko_name": "COINGECKONAME",
@@ -80,6 +81,7 @@ Below you can find a sample configuration...
     },
     {
       "account_address": "TOKENACCOUNTADDRESS",
+      "token_mint": "SPLTOKENMINTADDRESS",
       "symbol": "TOKENSYMBOLTOSHOW",
       "dc_channel_id": CHANNELTOPOSTMESSAGE,
       "coingecko_name": "COINGECKONAME",
@@ -87,6 +89,7 @@ Below you can find a sample configuration...
     },
     {
       "account_address": "TOKENACCOUNTADDRESS",
+      "token_mint": "SPLTOKENMINTADDRESS",
       "symbol": "TOKENSYMBOLTOSHOW",
       "dc_channel_id": CHANNELTOPOSTMESSAGE,
       "coingecko_name": "COINGECKONAME",
