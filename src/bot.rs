@@ -106,7 +106,6 @@ async fn check_tx_queue(ctx: Arc<Context>) {
     let arc_wallet = data_read.get::<WalletStore>().expect("Expected WalletStore in TypeMap");
 
     let queue = arc_wallet.lock().await.get_transaction_queue();
-    warn!("Len {:}", queue.len());
     for transaction in queue.into_iter() {
         let direction_emote = if transaction.ui_amount >= 0.0 { ":inbox_tray:" } else { ":outbox_tray:" };
         let info_message = format!("{:} {:.2} {:}", direction_emote, transaction.ui_amount, transaction.symbol);
