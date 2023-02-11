@@ -232,7 +232,7 @@ impl Wallet {
                                     if data.contains(&self.wallet_address.to_string()) && balance.mint == account_mint_to_find {
                                         post_balance = balance.ui_token_amount.ui_amount;
                                     } else if balance.mint == account_mint_to_find {
-                                        pre_balance = balance.ui_token_amount.ui_amount;
+                                        post_balance = balance.ui_token_amount.ui_amount;
                                     }
                                 }
                                 OptionSerializer::None => { warn!("Found 'None' while serializing owner!"); }
