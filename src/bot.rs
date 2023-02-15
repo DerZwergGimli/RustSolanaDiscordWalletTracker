@@ -161,12 +161,9 @@ async fn update_nickname(ctx: Arc<Context>, _guilds: Vec<GuildId>) {
 fn update_config_file_last_signatures(token_accounts: Vec<TokenAccount>) {
     let mut config_old = config::config::get_config();
 
-    for (index, _account_config) in config_old.account_configs.clone().into_iter().enumerate() {
-        match token_accounts[index].last_signature {
-            None => {}
-            Some(sig) => {
-                config_old.account_configs[index].last_signature = sig.to_string();
-            }
+    for (index, account_config) in config_old.account_configs.clone().into_iter().enumerate() {
+        if token_accounts[index].address == account_config.account_address {
+            config_old.account_configs[index].last_signature = token_accounts[index].clone().last_signature;
         }
     }
     config::config::update_config(config_old);

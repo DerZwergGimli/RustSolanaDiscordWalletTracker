@@ -16,7 +16,7 @@ async fn store(ctx: &Context, msg: &Message) -> CommandResult {
     table_signatures_stored.add_row(row!["Symbol", "Signature"]);
 
     tokens.into_iter().for_each(|token| {
-        table_signatures_stored.add_row(row![token.symbol, token.last_signature.unwrap_or_default().to_string()]);
+        table_signatures_stored.add_row(row![token.symbol, token.last_signature]);
     });
 
     let message =

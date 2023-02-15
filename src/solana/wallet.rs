@@ -31,7 +31,7 @@ pub struct TokenAccount {
     pub ui_amount: f64,
     pub coingecko_price: f64,
     coingecko_name: String,
-    pub last_signature: Option<Signature>,
+    pub last_signature: String,
 }
 
 #[derive(Clone)]
@@ -57,7 +57,7 @@ impl Wallet {
                 ui_amount: 0.0,
                 coingecko_price: 0.0,
                 coingecko_name: account.coingecko_name,
-                last_signature: Some(Signature::from_str(&*account.last_signature).unwrap()),
+                last_signature: account.last_signature,
 
             })
         });
@@ -111,14 +111,14 @@ impl Wallet {
         for (index, token_account) in self.token_accounts.clone().into_iter().enumerate() {
             match self.client.get_signatures_for_address_with_config(&Pubkey::from_str(&*token_account.address).unwrap(), GetConfirmedSignaturesForAddress2Config {
                 before: None,
-                until: token_account.last_signature,
+                until: Some(Signature::from_str(&*token_account.last_signature).unwrap()),
                 limit: Some(10),
                 commitment: Some(CommitmentConfig::finalized()),
             }) {
                 Ok(signatures) => {
                     info!("Fetched {:} signatures for {:}", signatures.len(), token_account.mint);
                     if !signatures.is_empty() {
-                        self.token_accounts[index].last_signature = Some(Signature::from_str(&*signatures[0].signature).unwrap());
+                        self.token_accounts[index].last_signature = signatures[0].signature.clone();
                     }
                     signatures.into_iter().for_each(|signature| {
                         match self.client.get_transaction_with_config(&Signature::from_str(&*signature.signature).unwrap(), RpcTransactionConfig {
