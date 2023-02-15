@@ -115,10 +115,11 @@ impl Wallet {
                 limit: Some(10),
                 commitment: Some(CommitmentConfig::finalized()),
             }) {
-                Ok(signatures) => {
+                Ok(mut signatures) => {
                     info!("Fetched {:} signatures for {:}", signatures.len(), token_account.mint);
                     if !signatures.is_empty() {
-                        self.token_accounts[index].last_signature = signatures[0].signature.clone();
+                        signatures.sort_by_key(|s| s.block_time);
+                        self.token_accounts[index].last_signature = signatures.first().unwrap().signature.clone();
                     }
                     signatures.into_iter().for_each(|signature| {
                         match self.client.get_transaction_with_config(&Signature::from_str(&*signature.signature).unwrap(), RpcTransactionConfig {
