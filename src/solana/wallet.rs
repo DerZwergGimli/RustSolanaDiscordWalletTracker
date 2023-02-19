@@ -118,8 +118,8 @@ impl Wallet {
                 Ok(mut signatures) => {
                     info!("Fetched {:} signatures for {:}", signatures.len(), token_account.mint);
                     if !signatures.is_empty() {
-                        //Reversing array order here!
-                        signatures.reverse();
+                        //Make sure signatures are timestamp sorted! ascending
+                        signatures.sort_by_key(|s| s.block_time);
                         //Make sure to get rid of Signatures with the same block time to not have duplicates.
                         match self.client.get_transaction_with_config(&Signature::from_str(&*self.token_accounts[index].last_signature).unwrap(), RpcTransactionConfig {
                             encoding: None,
