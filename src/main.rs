@@ -3,6 +3,7 @@ mod config;
 mod coingecko;
 mod bot;
 mod commands;
+mod test;
 
 use dotenv::dotenv;
 use crate::bot::init_bot;

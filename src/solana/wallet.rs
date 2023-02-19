@@ -118,6 +118,8 @@ impl Wallet {
                 Ok(mut signatures) => {
                     info!("Fetched {:} signatures for {:}", signatures.len(), token_account.mint);
                     if !signatures.is_empty() {
+                        //Reversing array order here!
+                        signatures.reverse();
                         //Make sure to get rid of Signatures with the same block time to not have duplicates.
                         match self.client.get_transaction_with_config(&Signature::from_str(&*self.token_accounts[index].last_signature).unwrap(), RpcTransactionConfig {
                             encoding: None,
@@ -146,7 +148,7 @@ impl Wallet {
                                     signature: signature.signature.clone(),
                                     address: token_account.address.clone(),
                                     symbol: token_account.symbol.clone(),
-                                    ui_amount: self.parse_balance_change(transaction, token_account.clone().mint),
+                                    ui_amount: Self::parse_balance_change(transaction, self.wallet_address.to_string(), token_account.clone().mint),
                                     block_time: signature.block_time.unwrap(),
                                 });
                             }
@@ -216,7 +218,7 @@ impl Wallet {
         table_balances.printstd();
     }
 
-    pub fn parse_balance_change(&self, transaction: EncodedConfirmedTransactionWithStatusMeta, account_mint_to_find: String) -> f64 {
+    pub fn parse_balance_change(transaction: EncodedConfirmedTransactionWithStatusMeta, wallet_address: String, account_mint_to_find: String) -> f64 {
         let mut pre_balance = Some(0.0);
         let mut post_balance = Some(0.0);
         match transaction.transaction.meta {
@@ -226,9 +228,7 @@ impl Wallet {
                         balances.into_iter().for_each(|balance| {
                             match balance.owner {
                                 OptionSerializer::Some(data) => {
-                                    if data.contains(&self.wallet_address.to_string()) && balance.mint == account_mint_to_find {
-                                        pre_balance = balance.ui_token_amount.ui_amount;
-                                    } else if balance.mint == account_mint_to_find {
+                                    if data == wallet_address.clone() && balance.mint == account_mint_to_find {
                                         pre_balance = balance.ui_token_amount.ui_amount;
                                     }
                                 }
@@ -244,9 +244,7 @@ impl Wallet {
                         balances.into_iter().for_each(|balance| {
                             match balance.owner {
                                 OptionSerializer::Some(data) => {
-                                    if data.contains(&self.wallet_address.to_string()) && balance.mint == account_mint_to_find {
-                                        post_balance = balance.ui_token_amount.ui_amount;
-                                    } else if balance.mint == account_mint_to_find {
+                                    if data == wallet_address.clone() && balance.mint == account_mint_to_find {
                                         post_balance = balance.ui_token_amount.ui_amount;
                                     }
                                 }
